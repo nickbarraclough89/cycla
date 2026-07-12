@@ -41,7 +41,6 @@ struct PlansView: View {
             // current offering configured in the RevenueCat dashboard.
             .sheet(isPresented: $showPaywall) {
                 PaywallView(displayCloseButton: true)
-                    // Dismiss automatically once the required entitlement is active.
                     .onPurchaseCompleted { _ in
                         subscriptions.clearDemoCancellation()
                         showPaywall = false

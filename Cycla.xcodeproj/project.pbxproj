@@ -15,11 +15,12 @@
 		BB0000000000000000000206 /* PlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000106 /* PlansView.swift */; };
 		BB0000000000000000000207 /* PlanDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000107 /* PlanDetailView.swift */; };
 		BB0000000000000000000208 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000108 /* ProfileView.swift */; };
-		BB0000000000000000000209 /* ProGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000109 /* ProGate.swift */; };
 		BB0000000000000000000211 /* NutritionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000112 /* NutritionPlan.swift */; };
 		BB0000000000000000000212 /* WelcomeOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000113 /* WelcomeOfferView.swift */; };
 		BB0000000000000000000213 /* CancellationFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000114 /* CancellationFlowView.swift */; };
 		BB0000000000000000000214 /* NutritionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000115 /* NutritionView.swift */; };
+		BB0000000000000000000216 /* MentionMeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000117 /* MentionMeService.swift */; };
+		BB0000000000000000000218 /* ReferrerDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000119 /* ReferrerDashboardView.swift */; };
 		BB0000000000000000000210 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000110 /* Assets.xcassets */; };
 		BC0000000000000000000301 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000401 /* RevenueCat */; };
 		BC0000000000000000000302 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = CC0000000000000000000402 /* RevenueCatUI */; };
@@ -34,11 +35,12 @@
 		AA0000000000000000000106 /* PlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlansView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000107 /* PlanDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDetailView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000108 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		AA0000000000000000000109 /* ProGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProGate.swift; sourceTree = "<group>"; };
 		AA0000000000000000000112 /* NutritionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPlan.swift; sourceTree = "<group>"; };
 		AA0000000000000000000113 /* WelcomeOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOfferView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000114 /* CancellationFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellationFlowView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000115 /* NutritionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000117 /* MentionMeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionMeService.swift; sourceTree = "<group>"; };
+		AA0000000000000000000119 /* ReferrerDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferrerDashboardView.swift; sourceTree = "<group>"; };
 		AA0000000000000000000110 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA0000000000000000000111 /* Cycla.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cycla.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -70,6 +72,7 @@
 				AA0000000000000000000101 /* CyclaApp.swift */,
 				AA0000000000000000000102 /* Constants.swift */,
 				AA0000000000000000000103 /* SubscriptionManager.swift */,
+				AA0000000000000000000117 /* MentionMeService.swift */,
 				DD0000000000000000000604 /* Models */,
 				DD0000000000000000000603 /* Views */,
 				AA0000000000000000000110 /* Assets.xcassets */,
@@ -84,10 +87,10 @@
 				AA0000000000000000000106 /* PlansView.swift */,
 				AA0000000000000000000107 /* PlanDetailView.swift */,
 				AA0000000000000000000108 /* ProfileView.swift */,
-				AA0000000000000000000109 /* ProGate.swift */,
 				AA0000000000000000000113 /* WelcomeOfferView.swift */,
 				AA0000000000000000000114 /* CancellationFlowView.swift */,
 				AA0000000000000000000115 /* NutritionView.swift */,
+				AA0000000000000000000119 /* ReferrerDashboardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -189,11 +192,12 @@
 				BB0000000000000000000206 /* PlansView.swift in Sources */,
 				BB0000000000000000000207 /* PlanDetailView.swift in Sources */,
 				BB0000000000000000000208 /* ProfileView.swift in Sources */,
-				BB0000000000000000000209 /* ProGate.swift in Sources */,
 				BB0000000000000000000211 /* NutritionPlan.swift in Sources */,
 				BB0000000000000000000212 /* WelcomeOfferView.swift in Sources */,
 				BB0000000000000000000213 /* CancellationFlowView.swift in Sources */,
 				BB0000000000000000000214 /* NutritionView.swift in Sources */,
+				BB0000000000000000000216 /* MentionMeService.swift in Sources */,
+				BB0000000000000000000218 /* ReferrerDashboardView.swift in Sources */,
 				BB0000000000000000000204 /* TrainingPlan.swift in Sources */,
 				BB0000000000000000000203 /* SubscriptionManager.swift in Sources */,
 				BB0000000000000000000202 /* Constants.swift in Sources */,

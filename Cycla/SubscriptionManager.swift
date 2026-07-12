@@ -151,16 +151,6 @@ final class SubscriptionManager: ObservableObject {
         }
     }
 
-    /// The offering to display in a paywall — either the one you named in
-    /// `Constants`, or the dashboard's "current" offering.
-    var displayOffering: Offering? {
-        guard let offerings else { return nil }
-        if let id = Constants.offeringIdentifier {
-            return offerings.offering(identifier: id)
-        }
-        return offerings.current
-    }
-
     /// Return a specific named offering, falling back to the current offering if
     /// that identifier isn't configured in the dashboard yet. This lets us ship
     /// tailored paywalls (welcome / peloton / retention) that degrade gracefully.
@@ -180,10 +170,6 @@ final class SubscriptionManager: ObservableObject {
 
     /// `true` when the user hasn't been identified via `signIn`.
     var isAnonymous: Bool { Purchases.shared.isAnonymous }
-
-    /// Where the user manages their subscription (App Store). `nil` on the Test
-    /// Store / for users without a store-backed subscription.
-    var managementURL: URL? { customerInfo?.managementURL }
 
     /// Identify the user with RevenueCat and attach subscriber attributes.
     /// In a real app you'd pass your backend's stable user id, not the raw email.
@@ -208,18 +194,6 @@ final class SubscriptionManager: ObservableObject {
             _ = try await Purchases.shared.logOut()
         } catch {
             handle(error)
-        }
-    }
-
-    // MARK: Manage / cancel
-
-    /// Open the OS subscription-management screen (App Store). On the Test Store
-    /// there's nothing to open, so we surface a friendly message instead.
-    func openManageSubscriptions() async {
-        do {
-            try await Purchases.shared.showManageSubscriptions()
-        } catch {
-            errorMessage = "Subscription management isn't available here. On a real device this opens your App Store subscriptions."
         }
     }
 
@@ -289,4 +263,4 @@ final class SubscriptionManager: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
-}
+}   

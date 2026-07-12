@@ -11,6 +11,7 @@ struct ProfileView: View {
     @State private var cancelTarget: CancellationFlowView.Target?
     @State private var showSignIn = false
     @State private var showWelcomePreview = false
+    @State private var showReferrer = false
     @State private var emailInput = ""
 
     /// Mirror of the first-run flag so we can reset it for testing.
@@ -125,6 +126,18 @@ struct ProfileView: View {
                     .disabled(subscriptions.isBusy)
                 }
 
+                // MARK: Referrals (Mention Me)
+                Section("Referrals") {
+                    Button {
+                        showReferrer = true
+                    } label: {
+                        Label("Refer a friend", systemImage: "gift")
+                    }
+                    Text("Give £10, get £10 when a friend subscribes.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
                 // MARK: Testing helpers (remove for production)
                 Section("Testing") {
                     Button {
@@ -152,6 +165,11 @@ struct ProfileView: View {
                         subscriptions.clearDemoCancellation()
                         showProPaywall = false
                     }
+            }
+            .sheet(isPresented: $showReferrer) {
+                ReferrerDashboardView(
+                    email: subscriptions.isAnonymous ? "jane.doe@example.com" : subscriptions.appUserID,
+                    firstname: "Cycla", surname: "Rider")
             }
             .sheet(isPresented: $showPelotonPaywall) {
                 if let offering = subscriptions.pelotonOffering {
