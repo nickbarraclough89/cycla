@@ -39,14 +39,22 @@ final class SubscriptionManager: ObservableObject {
     /// specific product id, because entitlements abstract over monthly/yearly/lifetime.
     /// Also respects a locally-simulated cancellation (demo only).
     var isPro: Bool {
-        proEntitlementActive && !demoCancelled
+        proEntitlementActive
+            && !cancelActive(entitlement: Constants.proEntitlementID, since: proCancelledAt)
     }
 
-    /// `true` when the user has the separate **Peloton** entitlement. This is an
-    /// independent purchase path from Pro — buying Peloton doesn't grant Pro and
-    /// vice versa (unless you attach the same products to both entitlements).
+    /// `true` when the user has the separate **Peloton** entitlement. Independent of
+    /// Pro — buying one doesn't grant the other, but the Champ bundle grants both.
     var isPelotonUnlocked: Bool {
-        (customerInfo?.entitlements[Constants.pelotonEntitlementID]?.isActive == true) && !pelotonCancelled
+        (customerInfo?.entitlements[Constants.pelotonEntitlementID]?.isActive == true)
+            && !cancelActive(entitlement: Constants.pelotonEntitlementID, since: pelotonCancelledAt)
+    }
+
+    /// Pro is owned on the RevenueCat side but locally cancelled (demo).
+    private var isProCancelled: Bool { proEntitlementActive && !isPro }
+    /// Peloton is owned but locally cancelled (demo).
+    private var isPelotonCancelled: Bool {
+        (customerInfo?.entitlements[Constants.pelotonEntitlementID]?.isActive == true) && !isPelotonUnlocked
     }
 
     /// A one-line summary of everything the user is subscribed to.
@@ -56,54 +64,68 @@ final class SubscriptionManager: ObservableObject {
         case (true, false):  return proStatusDescription
         case (false, true):  return "Peloton nutrition"
         case (false, false):
-            return (demoCancelled || pelotonCancelled) ? "Cancelled — resubscribe to restore access" : "Free plan"
+            return (isProCancelled || isPelotonCancelled) ? "Cancelled — resubscribe to restore access" : "Free plan"
         }
     }
 
     // MARK: Demo cancellation
     //
-    // The Test Store (and StoreKit generally) has no in-app "cancel" — real
-    // cancellation happens in the App Store and RevenueCat reflects it
-    // automatically. For the demo we simulate it locally so the cancel flow
-    // visibly returns the user to Free without leaving the app. It auto-clears
-    // when the user re-subscribes.
+    // The Test Store (and StoreKit) has no in-app "cancel" — real cancellation
+    // happens in the App Store and RevenueCat reflects it automatically. For the
+    // demo we simulate it locally so the cancel flow visibly returns the user to
+    // Free. Each subscription cancels INDEPENDENTLY. A cancel is stored as a
+    // timestamp and only applies until the entitlement is (re)purchased after that
+    // moment — so buying Pro, Peloton, or the Champ bundle (which renews BOTH)
+    // automatically revives the right access. No sticky flags that get stuck.
 
-    private static let demoCancelledKey = "cyclaDemoCancelled"
+    private static let proCancelledAtKey = "cyclaProCancelledAt"
+    private static let pelotonCancelledAtKey = "cyclaPelotonCancelledAt"
 
-    @Published private(set) var demoCancelled = UserDefaults.standard.bool(forKey: SubscriptionManager.demoCancelledKey)
+    @Published private(set) var proCancelledAt: Date? =
+        UserDefaults.standard.object(forKey: SubscriptionManager.proCancelledAtKey) as? Date
+    @Published private(set) var pelotonCancelledAt: Date? =
+        UserDefaults.standard.object(forKey: SubscriptionManager.pelotonCancelledAtKey) as? Date
 
-    /// Simulate cancelling the subscription (demo only).
+    /// A cancel applies only until the entitlement is (re)purchased after it was
+    /// cancelled — so any newer purchase (incl. the Champ bundle) auto-revives it.
+    private func cancelActive(entitlement id: String, since cancelledAt: Date?) -> Bool {
+        guard let cancelledAt else { return false }
+        if let lastPurchase = customerInfo?.entitlements[id]?.latestPurchaseDate,
+           lastPurchase > cancelledAt {
+            return false
+        }
+        return true
+    }
+
+    /// Simulate cancelling **Pro** (demo only). Independent of Peloton.
     func cancelSubscription() {
-        demoCancelled = true
-        UserDefaults.standard.set(true, forKey: Self.demoCancelledKey)
+        proCancelledAt = Date()
+        UserDefaults.standard.set(proCancelledAt, forKey: Self.proCancelledAtKey)
     }
 
-    /// Clear the simulated cancellation — called whenever the user re-subscribes.
-    func clearDemoCancellation() {
-        guard demoCancelled else { return }
-        demoCancelled = false
-        UserDefaults.standard.set(false, forKey: Self.demoCancelledKey)
-    }
-
-    // Peloton has its own independent simulated cancellation.
-    private static let pelotonCancelledKey = "cyclaPelotonCancelled"
-
-    @Published private(set) var pelotonCancelled = UserDefaults.standard.bool(forKey: SubscriptionManager.pelotonCancelledKey)
-
+    /// Simulate cancelling **Peloton** (demo only). Independent of Pro.
     func cancelPeloton() {
-        pelotonCancelled = true
-        UserDefaults.standard.set(true, forKey: Self.pelotonCancelledKey)
+        pelotonCancelledAt = Date()
+        UserDefaults.standard.set(pelotonCancelledAt, forKey: Self.pelotonCancelledAtKey)
     }
 
+    /// Explicitly clear the Pro cancellation (also happens automatically on a newer purchase).
+    func clearDemoCancellation() {
+        guard proCancelledAt != nil else { return }
+        proCancelledAt = nil
+        UserDefaults.standard.removeObject(forKey: Self.proCancelledAtKey)
+    }
+
+    /// Explicitly clear the Peloton cancellation.
     func clearPelotonCancellation() {
-        guard pelotonCancelled else { return }
-        pelotonCancelled = false
-        UserDefaults.standard.set(false, forKey: Self.pelotonCancelledKey)
+        guard pelotonCancelledAt != nil else { return }
+        pelotonCancelledAt = nil
+        UserDefaults.standard.removeObject(forKey: Self.pelotonCancelledAtKey)
     }
 
     /// A human-friendly description of how the user unlocked Pro (for the profile screen).
     var proStatusDescription: String {
-        if demoCancelled { return "Cancelled — resubscribe to restore Pro" }
+        if isProCancelled { return "Cancelled — resubscribe to restore Pro" }
         guard let entitlement = customerInfo?.entitlements[Constants.proEntitlementID],
               entitlement.isActive else {
             return "Free plan"
