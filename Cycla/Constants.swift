@@ -29,6 +29,10 @@ enum Constants {
         static let peloton = "Peloton"
         /// Retention offer shown in the cancellation flow.
         static let retention = "retention"
+        /// All access pro offering.
+        static let Champ_Pro = "Champ_Pro"
+        /// All access Peloton offering..
+        static let Champ_peloton = "Champ_peloton"
     }
 
     // MARK: Mention Me

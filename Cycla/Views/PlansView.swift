@@ -4,12 +4,12 @@ import RevenueCatUI
 
 struct PlansView: View {
     @EnvironmentObject private var subscriptions: SubscriptionManager
-
+    
     @State private var selectedPlan: TrainingPlan?
     @State private var showPaywall = false
-
+    
     private let plans = TrainingPlan.samples
-
+    
     var body: some View {
         NavigationStack {
             List {
@@ -20,7 +20,7 @@ struct PlansView: View {
                             .listRowBackground(Color.clear)
                     }
                 }
-
+                
                 Section("Training plans") {
                     ForEach(plans) { plan in
                         Button {
@@ -40,21 +40,25 @@ struct PlansView: View {
             // locked plan is tapped). `PaywallView` automatically renders the
             // current offering configured in the RevenueCat dashboard.
             .sheet(isPresented: $showPaywall) {
-                PaywallView(displayCloseButton: true)
-                    .onPurchaseCompleted { _ in
-                        subscriptions.clearDemoCancellation()
-                        showPaywall = false
-                    }
-                    .onRestoreCompleted { customerInfo in
-                        if customerInfo.entitlements[Constants.proEntitlementID]?.isActive == true {
+                // Fire the Champ (all-access) paywall instead of the plain Pro one.
+                if let offering = subscriptions.champOffering {
+                    PaywallView(offering: offering, displayCloseButton: true)
+                        .onPurchaseCompleted { _ in
                             subscriptions.clearDemoCancellation()
                             showPaywall = false
                         }
-                    }
+                        .onRestoreCompleted { customerInfo in
+                            if customerInfo.entitlements[Constants.proEntitlementID]?.isActive == true {
+                                subscriptions.clearDemoCancellation()
+                                showPaywall = false
+                            }
+                        }
+                }
             }
         }
     }
-
+    
+    
     /// Free plans (or any plan when the user is Pro) open directly. A locked plan
     /// triggers the paywall instead.
     private func open(_ plan: TrainingPlan) {
@@ -64,7 +68,7 @@ struct PlansView: View {
             selectedPlan = plan
         }
     }
-
+    
     private var proUpsellBanner: some View {
         Button {
             showPaywall = true

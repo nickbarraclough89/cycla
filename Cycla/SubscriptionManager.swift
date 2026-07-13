@@ -162,6 +162,8 @@ final class SubscriptionManager: ObservableObject {
     var welcomeOffering: Offering? { offering(id: Constants.Offering.welcome) }
     var pelotonOffering: Offering? { offering(id: Constants.Offering.peloton) }
     var retentionOffering: Offering? { offering(id: Constants.Offering.retention) }
+    var champOffering: Offering? { offering(id: Constants.Offering.Champ_Pro) }
+    var champPeloton: Offering? {offering(id: Constants.Offering.Champ_peloton) }
 
     // MARK: Account / identity
 

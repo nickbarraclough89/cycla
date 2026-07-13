@@ -13,10 +13,12 @@ struct NutritionView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    Text("Fuel your riding. Free basics for everyone — the advanced **Peloton** programme is a separate add-on.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                if !subscriptions.isPelotonUnlocked {
+                    Section {
+                        pelotonUpsellBanner
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                    }
                 }
 
                 Section("Nutrition plans") {
@@ -37,7 +39,7 @@ struct NutritionView: View {
             }
             // Locked Peloton opens its paywall directly — no interstitial.
             .sheet(isPresented: $showPelotonPaywall) {
-                if let offering = subscriptions.pelotonOffering {
+                if let offering = subscriptions.champPeloton {
                     PaywallView(offering: offering, displayCloseButton: true)
                         .onPurchaseCompleted { _ in
                             subscriptions.clearPelotonCancellation()
@@ -57,6 +59,29 @@ struct NutritionView: View {
             selectedPlan = plan
         }
     }
+    private var pelotonUpsellBanner: some View {
+            Button {
+                showPelotonPaywall = true
+            } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Go all-access", systemImage: "crown.fill")
+                        .font(.headline)
+                    Text("Unlock every training and nutrition plan with Cycla Champ.")
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+                .background(
+                    LinearGradient(colors: [.orange, .pink],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                )
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+        }
 }
 
 private struct NutritionRow: View {

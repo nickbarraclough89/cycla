@@ -160,12 +160,15 @@ struct ProfileView: View {
                 }
             }
             .sheet(isPresented: $showProPaywall) {
-                PaywallView(displayCloseButton: true)
-                    .onPurchaseCompleted { _ in
-                        subscriptions.clearDemoCancellation()
-                        showProPaywall = false
-                    }
-            }
+                            // All-access Champ paywall instead of the plain Pro one.
+                            if let offering = subscriptions.champOffering {
+                                PaywallView(offering: offering, displayCloseButton: true)
+                                    .onPurchaseCompleted { _ in
+                                        subscriptions.clearDemoCancellation()
+                                        showProPaywall = false
+                                    }
+                            }
+                        }
             .sheet(isPresented: $showReferrer) {
                 ReferrerDashboardView(
                     email: subscriptions.isAnonymous ? "jane.doe@example.com" : subscriptions.appUserID,
